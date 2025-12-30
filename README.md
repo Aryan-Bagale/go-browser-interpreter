@@ -131,7 +131,7 @@ Most modern CDNs handle this automatically.
 📖 Tutorial
 Read the full step-by-step guide on Medium:
 
-Building a Serverless Go Playground on Windows (using WSL + WebAssembly)
+[Building a Serverless Go Playground on Windows (using WSL + WebAssembly)](https://medium.com/@aryanbagale/building-your-client-side-go-interpreter-using-wsl-windows-subsystem-for-linux-and-vs-code-f7820eb73012)
 
 ## 🤝 Contributing
 
