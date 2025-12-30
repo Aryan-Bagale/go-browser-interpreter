@@ -1,185 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Go WASM Tour</title>
+    <meta charset="utf-8">
+    <title>Go WASM Interpreter</title>
     <style>
-        /* Basic Reset & Layout */
-        * { box-sizing: border-box; }
-        body { margin: 0; display: flex; height: 100vh; font-family: 'Segoe UI', sans-serif; background: #202020; color: #ddd; }
-        
-        /* Left Panel: Instructions */
-        .sidebar { width: 35%; padding: 30px; border-right: 1px solid #444; background: #2d2d2d; overflow-y: auto; }
-        h1 { color: #00add8; margin-top: 0; }
-        h2 { font-size: 1.2rem; color: #fff; margin-bottom: 10px; }
-        p { line-height: 1.6; color: #bbb; }
-        .task-box { background: #333; padding: 15px; border-left: 4px solid #00add8; margin-top: 20px; border-radius: 4px; }
-        
-        /* Navigation Buttons */
-        .nav-btns { margin-top: 30px; display: flex; gap: 10px; }
-        button.nav { padding: 10px 20px; background: #444; color: white; border: none; cursor: pointer; border-radius: 4px; }
-        button.nav:hover { background: #555; }
-        button.primary { background: #00add8; }
-        button.primary:hover { background: #009dc4; }
-
-        /* Right Panel: Editor & Output */
-        .main { flex: 1; display: flex; flex-direction: column; }
-        
-        /* Editor Area */
-        .editor-container { flex: 2; display: flex; flex-direction: column; border-bottom: 1px solid #444; }
-        textarea { flex: 1; background: #1e1e1e; color: #d4d4d4; border: none; padding: 20px; font-family: 'Consolas', 'Courier New', monospace; font-size: 14px; resize: none; outline: none; }
-        
-        /* Toolbar */
-        .toolbar { padding: 10px 20px; background: #252526; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
-        .run-btn { background: #0e639c; color: white; border: none; padding: 8px 24px; font-size: 14px; cursor: pointer; border-radius: 2px; font-weight: bold; }
-        .run-btn:hover { background: #1177bb; }
-
-        /* Output Area */
-        .output-container { flex: 1; background: #1e1e1e; padding: 20px; font-family: monospace; overflow-y: auto; }
-        .output-label { font-size: 12px; color: #888; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
-        #output { color: #ccc; white-space: pre-wrap; }
-        .success { color: #4caf50 !important; font-weight: bold; }
-        .error { color: #ff5252 !important; }
+        body { font-family: system-ui, sans-serif; padding: 2rem; max-width: 800px; margin: 0 auto; background: #222; color: #eee; }
+        textarea { width: 100%; height: 200px; font-family: monospace; padding: 10px; background: #333; color: #fff; border: 1px solid #555; }
+        #output { background: #111; padding: 15px; white-space: pre-wrap; font-family: monospace; border: 1px solid #444; min-height: 50px; margin-top: 10px; color: #0f0; }
+        button { padding: 10px 20px; font-weight: bold; margin: 10px 0; cursor: pointer; background: #00add8; border: none; color: white; }
+        button:hover { background: #008db0; }
     </style>
 </head>
 <body>
+    <h1>Go Client-Side Interpreter</h1>
+    <p>Type Go code below. It runs entirely in your browser!</p>
 
-    <div class="sidebar">
-        <h1>GO TOUR <span style="font-size:0.5em; color:#666">WASM Edition</span></h1>
-        
-        <div id="lesson-content">
-            </div>
+    <textarea id="code">
+package main
+import "fmt"
 
-        <div class="nav-btns">
-            <button class="nav" onclick="prevLesson()">Previous</button>
-            <button class="nav primary" onclick="nextLesson()">Next Lesson</button>
-        </div>
-    </div>
-
-    <div class="main">
-        <div class="toolbar">
-            <span style="color:#888; font-size: 0.9em;">main.go</span>
-            <button class="run-btn" onclick="runLesson()">▶ Run Code</button>
-        </div>
-        
-        <div class="editor-container">
-            <textarea id="code" spellcheck="false"></textarea>
-        </div>
-
-        <div class="output-container">
-            <div class="output-label">Terminal Output</div>
-            <div id="output">Initializing WASM engine...</div>
-        </div>
-    </div>
+func main() {
+    fmt.Println("Hello from WSL + WASM!")
+    fmt.Println("Calculation:", 5 * 5)
+}
+    </textarea>
+    
+    <br>
+    <button onclick="execute()">Run Code</button>
+    
+    <div id="output">Loading WASM... (Wait a moment)</div>
 
     <script src="wasm_exec.js"></script>
-    <script>
-        // --- 1. THE DATA: LESSONS ---
-        const lessons = [
-            {
-                title: "Lesson 1: Hello, World!",
-                text: `
-                    <p>Welcome to the Interactive Go Tour. This runs entirely in your browser using WebAssembly!</p>
-                    <p>Let's start with the basics. In Go, every runnable program starts with a package called <code>main</code>.</p>
-                `,
-                task: "Change the message inside <code>Println</code> to say <b>\"Hello, Human\"</b> and run the code.",
-                defaultCode: `package main
-
-import "fmt"
-
-func main() {
-    fmt.Println("Hello, World!")
-}`,
-                // Simple string check to validate the lesson
-                checkSuccess: (output) => output.includes("Hello, Human")
-            },
-            {
-                title: "Lesson 2: Simple Math",
-                text: `
-                    <p>Great job! Now let's do some math.</p>
-                    <p>Go can handle arithmetic expressions easily inside Print statements.</p>
-                `,
-                task: "Add a line that prints the result of <b>10 * 10</b>.",
-                defaultCode: `package main
-
-import "fmt"
-
-func main() {
-    fmt.Println("The answer is:")
-    // Add your code below
     
-}`,
-                checkSuccess: (output) => output.includes("100")
-            }
-        ];
-
-        let currentLessonIndex = 0;
-
-        // --- 2. THE ENGINE: WASM SETUP ---
+    <script>
         const go = new Go();
+        
+        // Load the WASM file
         WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject).then((result) => {
             go.run(result.instance);
-            document.getElementById("output").innerText = "Ready! Click Run Code.";
+            document.getElementById("output").innerText = "Ready.";
         });
 
-        // --- 3. UI LOGIC ---
-        function loadLesson(index) {
-            if (index < 0 || index >= lessons.length) return;
-            currentLessonIndex = index;
-            
-            const lesson = lessons[index];
-            
-            // Render Text
-            const html = `
-                <h2>${lesson.title}</h2>
-                ${lesson.text}
-                <div class="task-box">
-                    <strong>TASK:</strong><br>
-                    ${lesson.task}
-                </div>
-            `;
-            document.getElementById("lesson-content").innerHTML = html;
-            
-            // Set Code (Only if it's not already modified by user to avoid frustration, 
-            // but for this demo we reset it every time for simplicity)
-            document.getElementById("code").value = lesson.defaultCode;
-            document.getElementById("output").innerText = "";
-        }
-
-        function runLesson() {
+        function execute() {
             const code = document.getElementById("code").value;
-            const outputDiv = document.getElementById("output");
-            
-            outputDiv.innerText = "Running...";
-            
-            // 1. Call Go WASM
-            // Note: runGoCode is defined in your main.go
+            // Call the Go function
             const result = runGoCode(code); 
-            
-            // 2. Display Output
-            outputDiv.innerText = result;
-
-            // 3. Check Success
-            const currentLesson = lessons[currentLessonIndex];
-            if (currentLesson.checkSuccess && currentLesson.checkSuccess(result)) {
-                outputDiv.innerHTML += `\n\n<span class="success">✨ SUCCESS! You passed this lesson.</span>`;
-            } else if (currentLesson.checkSuccess) {
-                outputDiv.innerHTML += `\n\n<span class="error">❌ Not quite. Try again!</span>`;
-            }
+            document.getElementById("output").innerText = result;
         }
-
-        function nextLesson() {
-            loadLesson(currentLessonIndex + 1);
-        }
-
-        function prevLesson() {
-            loadLesson(currentLessonIndex - 1);
-        }
-
-        // Initialize
-        loadLesson(0);
-
     </script>
 </body>
 </html>
