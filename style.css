@@ -1,118 +1,53 @@
-/* style.css
- *
- * This file controls how the page looks.
- * It contains NO logic — only colors, spacing, and fonts.
- *
- * Keeping CSS in a separate file makes the project easier
- * to understand and maintain.
- */
-
-/* --------------------------------------------------------
-   Page layout and background
--------------------------------------------------------- */
-body {
-    /* Use the system default font for a clean look */
-    font-family: system-ui, sans-serif;
-
-    /* Add space around the content */
-    padding: 2rem;
-
-    /* Limit page width so text is easy to read */
-    max-width: 800px;
-
-    /* Center the page horizontally */
-    margin: 0 auto;
-
-    /* Dark background */
-    background: #222;
-
-    /* Light text color */
-    color: #eee;
+/* ================================================
+   Basic page styling
+   ================================================ */
+body { 
+    font-family: system-ui, -apple-system, sans-serif; 
+    margin: 0; 
+    padding: 2rem; 
+    background: #1e1e1e; 
+    color: #eee; 
+    max-width: 900px; 
+    margin: 0 auto; 
 }
 
-/* --------------------------------------------------------
-   Code editor (textarea)
--------------------------------------------------------- */
-textarea {
-    /* Take full width of the page */
-    width: 100%;
-
-    /* Fixed height for code editing */
-    height: 200px;
-
-    /* Monospace font is best for code */
-    font-family: monospace;
-
-    /* Space inside the textarea */
-    padding: 10px;
-
-    /* Dark editor background */
-    background: #333;
-
-    /* White text */
-    color: #fff;
-
-    /* Subtle border */
-    border: 1px solid #555;
+/* ================================================
+   Monaco Editor container styling
+   ================================================ */
+#editor { 
+    height: 250px;           /* CHANGED: Reduced from 400px to 250px to bring output up */
+    border: 1px solid #444; 
 }
 
-/* --------------------------------------------------------
-   Output box (program results)
--------------------------------------------------------- */
-#output {
-    /* Very dark background */
-    background: #111;
-
-    /* Space inside the box */
-    padding: 15px;
-
-    /* Preserve new lines from program output */
-    white-space: pre-wrap;
-
-    /* Use monospace font like a terminal */
-    font-family: monospace;
-
-    /* Border around output area */
-    border: 1px solid #444;
-
-    /* Minimum height so it’s always visible */
-    min-height: 50px;
-
-    /* Space above the output box */
-    margin-top: 10px;
-
-    /* Green text like a terminal */
-    color: #0f0;
+/* ================================================
+   Output box styling
+   ================================================ */
+#output { 
+    background: #111;               
+    padding: 10px;                  /* Reduced padding slightly */
+    white-space: pre-wrap;          
+    font-family: 'Consolas', monospace;         
+    border: 1px solid #333;         
+    min-height: 40px;               
+    margin-top: 10px;               /* CHANGED: Reduced from 20px to 10px */
+    color: #0f0;                    
 }
 
-/* --------------------------------------------------------
+/* ================================================
    Run button styling
--------------------------------------------------------- */
-button {
-    /* Space inside the button */
-    padding: 10px 20px;
-
-    /* Make text stand out */
-    font-weight: bold;
-
-    /* Space above and below button */
-    margin: 10px 0;
-
-    /* Cursor changes to pointer on hover */
-    cursor: pointer;
-
-    /* Go brand color */
-    background: #00add8;
-
-    /* Remove default border */
-    border: none;
-
-    /* White text */
-    color: white;
+   ================================================ */
+button { 
+    padding: 8px 20px;              /* Slightly smaller button */
+    font-weight: bold; 
+    margin-top: 10px;               /* CHANGED: Reduced space above button */
+    cursor: pointer; 
+    background: #007acc;            
+    border: none; 
+    color: white;                   
+    font-size: 14px;
+    border-radius: 2px;
 }
 
-/* Button hover effect */
-button:hover {
-    /* Slightly darker blue when hovering */
-    background: #008db0;
+button:hover { 
+    background: #005f9e;            
 }

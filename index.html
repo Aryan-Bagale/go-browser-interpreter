@@ -1,101 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Character encoding (important for symbols & emojis) -->
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
+    <title>Go Browser Interpreter</title>
 
-    <!-- Text shown in the browser tab -->
-    <title>Go WASM Interpreter</title>
-
-    <!-- Load external CSS file for styling -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
-    <!-- Page title -->
     <h1>Go Client-Side Interpreter</h1>
+    <p>Type Go code below. It runs entirely in your browser!</p>
 
-    <!-- Short description -->
-    <p>
-        Type Go code below. It runs entirely in your browser using
-        WebAssembly and the Yaegi interpreter.
-    </p>
+    <div id="editor"></div>
 
-    <!--
-        Text area where the user writes Go code.
-        This can be a complete Go program.
-    -->
-    <textarea id="code">
-package main
-
-import "fmt"
-
-func main() {
-    fmt.Println("Hello from WSL + WASM!")
-    fmt.Println("Calculation:", 5 * 5)
-}
-    </textarea>
-
-    <br>
-
-    <!--
-        Button that triggers code execution.
-        When clicked, it calls the execute() function in JavaScript.
-    -->
     <button onclick="execute()">Run Code</button>
 
-    <!--
-        Output area where the program result or errors are shown.
-    -->
-    <div id="output">Loading WASM... (please wait)</div>
+    <div id="output">Loading WASM... (Wait a moment)</div>
 
-    <!--
-        wasm_exec.js is provided by the Go toolchain.
-        It allows JavaScript to run Go WebAssembly programs.
-    -->
     <script src="wasm_exec.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+
     <script>
-        /*
-            Create a new Go runtime instance.
-            The "Go" class is defined in wasm_exec.js.
-        */
-        const go = new Go();
+        // ---------------------------
+        // 1. Initialize Go WASM runtime
+        // ---------------------------
+        const go = new Go(); // Go runtime object required to run WASM
 
-        /*
-            Load the compiled WebAssembly file (main.wasm)
-            and start the Go runtime.
-        */
-        WebAssembly.instantiateStreaming(
-            fetch("main.wasm"),
-            go.importObject
-        ).then((result) => {
-            // Start the Go program (calls main() in Go)
-            go.run(result.instance);
+        // Load the compiled WASM file
+        WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject)
+            .then(result => {
+                go.run(result.instance); // Run the WASM instance
+                document.getElementById("output").innerText = "Ready.";
+            })
+            .catch(err => {
+                document.getElementById("output").innerText = "Error loading WASM: " + err;
+                console.error(err);
+            });
 
-            // Update UI to show readiness
-            document.getElementById("output").innerText = "Ready.";
-        }).catch((err) => {
-            // Show error if WASM fails to load
-            document.getElementById("output").innerText =
-                "Failed to load WASM: " + err;
+        // ---------------------------
+        // 2. Initialize Monaco Editor
+        // ---------------------------
+        require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' }});
+        
+        require(['vs/editor/editor.main'], function () {
+            // Create editor inside the #editor div
+            window.editor = monaco.editor.create(document.getElementById('editor'), {
+                value: [
+                    'package main',
+                    '',
+                    'import "fmt"',
+                    '',
+                    'func main() {',
+                    '    fmt.Println("Hello from Monaco + WASM!")',
+                    '    fmt.Println("Calculation:", 12 * 12)',
+                    '}'
+                ].join('\n'),
+                language: 'go',       // Set language to Go
+                theme: 'vs-dark',     // Dark theme
+                automaticLayout: true,// Adjust layout automatically
+                minimap: { enabled: false }, // Hide minimap for cleanliness
+                fontSize: 14,
+                scrollBeyondLastLine: false
+            });
         });
 
-        /*
-            Called when the user clicks the "Run Code" button.
-            It sends the code to Go and displays the output.
-        */
+        // ---------------------------
+        // 3. Run code function
+        // ---------------------------
         function execute() {
-            // Get Go code from textarea
-            const code = document.getElementById("code").value;
+            // Get code from Monaco editor
+            if (!window.editor) return;
+            
+            const code = window.editor.getValue();
 
-            /*
-                runGoCode() is a function written in Go
-                and exposed to JavaScript using syscall/js.
-            */
+            // Call Go function exposed via WASM
+            // runGoCode is defined in main.go
             const result = runGoCode(code);
 
-            // Display the result in the output box
+            // Display output in the output box
             document.getElementById("output").innerText = result;
         }
     </script>
