@@ -22,7 +22,22 @@
 
     <script>
         // ---------------------------
-        // 1. Initialize Go WASM runtime
+        // 1. FIX: Setup Monaco Environment for GitHub Pages (CORS Fix)
+        // ---------------------------
+        // This acts as a proxy to load workers from the CDN without breaking browser security
+        window.MonacoEnvironment = {
+            getWorkerUrl: function (workerId, label) {
+                return `data:text/javascript;charset=utf-8,${encodeURIComponent(`
+                    self.MonacoEnvironment = {
+                        baseUrl: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/'
+                    };
+                    importScripts('https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/base/worker/workerMain.js');`
+                )}`;
+            }
+        };
+
+        // ---------------------------
+        // 2. Initialize Go WASM runtime
         // ---------------------------
         const go = new Go(); // Go runtime object required to run WASM
 
@@ -38,7 +53,7 @@
             });
 
         // ---------------------------
-        // 2. Initialize Monaco Editor
+        // 3. Initialize Monaco Editor
         // ---------------------------
         require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' }});
         
@@ -65,7 +80,7 @@
         });
 
         // ---------------------------
-        // 3. Run code function
+        // 4. Run code function
         // ---------------------------
         function execute() {
             // Get code from Monaco editor
