@@ -11,7 +11,7 @@
 </head>
 <body>
 
-    <h1>Go Client-Side Interpreter</h1>
+    <h1>Go Browser Interpreter</h1>
 
     <p>Type Go code below. It runs entirely in your browser!</p>
 
@@ -88,7 +88,14 @@
                         'import "fmt"',
                         '',
                         'func main() {',
-                        '    fmt.Println("Hello, World!")',
+                        '    fmt.Println("👋 Welcome to the Go Browser Interpreter!")',
+                        '    fmt.Println()',
+                        '    ',
+                        '    fmt.Println("This runs entirely in your browser")',
+                        '    fmt.Println("Powered by WebAssembly + Yaegi")',
+                        '    fmt.Println()',
+                        '',
+                        '    fmt.Println("Try editing this code and press Run (Ctrl + Enter)")',
                         '}'
                     ].join('\n'),
 
