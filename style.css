@@ -1,0 +1,118 @@
+/* style.css
+ *
+ * This file controls how the page looks.
+ * It contains NO logic — only colors, spacing, and fonts.
+ *
+ * Keeping CSS in a separate file makes the project easier
+ * to understand and maintain.
+ */
+
+/* --------------------------------------------------------
+   Page layout and background
+-------------------------------------------------------- */
+body {
+    /* Use the system default font for a clean look */
+    font-family: system-ui, sans-serif;
+
+    /* Add space around the content */
+    padding: 2rem;
+
+    /* Limit page width so text is easy to read */
+    max-width: 800px;
+
+    /* Center the page horizontally */
+    margin: 0 auto;
+
+    /* Dark background */
+    background: #222;
+
+    /* Light text color */
+    color: #eee;
+}
+
+/* --------------------------------------------------------
+   Code editor (textarea)
+-------------------------------------------------------- */
+textarea {
+    /* Take full width of the page */
+    width: 100%;
+
+    /* Fixed height for code editing */
+    height: 200px;
+
+    /* Monospace font is best for code */
+    font-family: monospace;
+
+    /* Space inside the textarea */
+    padding: 10px;
+
+    /* Dark editor background */
+    background: #333;
+
+    /* White text */
+    color: #fff;
+
+    /* Subtle border */
+    border: 1px solid #555;
+}
+
+/* --------------------------------------------------------
+   Output box (program results)
+-------------------------------------------------------- */
+#output {
+    /* Very dark background */
+    background: #111;
+
+    /* Space inside the box */
+    padding: 15px;
+
+    /* Preserve new lines from program output */
+    white-space: pre-wrap;
+
+    /* Use monospace font like a terminal */
+    font-family: monospace;
+
+    /* Border around output area */
+    border: 1px solid #444;
+
+    /* Minimum height so it’s always visible */
+    min-height: 50px;
+
+    /* Space above the output box */
+    margin-top: 10px;
+
+    /* Green text like a terminal */
+    color: #0f0;
+}
+
+/* --------------------------------------------------------
+   Run button styling
+-------------------------------------------------------- */
+button {
+    /* Space inside the button */
+    padding: 10px 20px;
+
+    /* Make text stand out */
+    font-weight: bold;
+
+    /* Space above and below button */
+    margin: 10px 0;
+
+    /* Cursor changes to pointer on hover */
+    cursor: pointer;
+
+    /* Go brand color */
+    background: #00add8;
+
+    /* Remove default border */
+    border: none;
+
+    /* White text */
+    color: white;
+}
+
+/* Button hover effect */
+button:hover {
+    /* Slightly darker blue when hovering */
+    background: #008db0;
+}

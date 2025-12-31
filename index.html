@@ -1,22 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <!-- Character encoding (important for symbols & emojis) -->
     <meta charset="utf-8">
-    <title>Go WASM Interpreter</title>
-    <style>
-        body { font-family: system-ui, sans-serif; padding: 2rem; max-width: 800px; margin: 0 auto; background: #222; color: #eee; }
-        textarea { width: 100%; height: 200px; font-family: monospace; padding: 10px; background: #333; color: #fff; border: 1px solid #555; }
-        #output { background: #111; padding: 15px; white-space: pre-wrap; font-family: monospace; border: 1px solid #444; min-height: 50px; margin-top: 10px; color: #0f0; }
-        button { padding: 10px 20px; font-weight: bold; margin: 10px 0; cursor: pointer; background: #00add8; border: none; color: white; }
-        button:hover { background: #008db0; }
-    </style>
-</head>
-<body>
-    <h1>Go Client-Side Interpreter</h1>
-    <p>Type Go code below. It runs entirely in your browser!</p>
 
+    <!-- Text shown in the browser tab -->
+    <title>Go WASM Interpreter</title>
+
+    <!-- Load external CSS file for styling -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Page title -->
+    <h1>Go Client-Side Interpreter</h1>
+
+    <!-- Short description -->
+    <p>
+        Type Go code below. It runs entirely in your browser using
+        WebAssembly and the Yaegi interpreter.
+    </p>
+
+    <!--
+        Text area where the user writes Go code.
+        This can be a complete Go program.
+    -->
     <textarea id="code">
 package main
+
 import "fmt"
 
 func main() {
@@ -24,27 +35,67 @@ func main() {
     fmt.Println("Calculation:", 5 * 5)
 }
     </textarea>
-    
-    <br>
-    <button onclick="execute()">Run Code</button>
-    
-    <div id="output">Loading WASM... (Wait a moment)</div>
 
+    <br>
+
+    <!--
+        Button that triggers code execution.
+        When clicked, it calls the execute() function in JavaScript.
+    -->
+    <button onclick="execute()">Run Code</button>
+
+    <!--
+        Output area where the program result or errors are shown.
+    -->
+    <div id="output">Loading WASM... (please wait)</div>
+
+    <!--
+        wasm_exec.js is provided by the Go toolchain.
+        It allows JavaScript to run Go WebAssembly programs.
+    -->
     <script src="wasm_exec.js"></script>
-    
+
     <script>
+        /*
+            Create a new Go runtime instance.
+            The "Go" class is defined in wasm_exec.js.
+        */
         const go = new Go();
-        
-        // Load the WASM file
-        WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject).then((result) => {
+
+        /*
+            Load the compiled WebAssembly file (main.wasm)
+            and start the Go runtime.
+        */
+        WebAssembly.instantiateStreaming(
+            fetch("main.wasm"),
+            go.importObject
+        ).then((result) => {
+            // Start the Go program (calls main() in Go)
             go.run(result.instance);
+
+            // Update UI to show readiness
             document.getElementById("output").innerText = "Ready.";
+        }).catch((err) => {
+            // Show error if WASM fails to load
+            document.getElementById("output").innerText =
+                "Failed to load WASM: " + err;
         });
 
+        /*
+            Called when the user clicks the "Run Code" button.
+            It sends the code to Go and displays the output.
+        */
         function execute() {
+            // Get Go code from textarea
             const code = document.getElementById("code").value;
-            // Call the Go function
-            const result = runGoCode(code); 
+
+            /*
+                runGoCode() is a function written in Go
+                and exposed to JavaScript using syscall/js.
+            */
+            const result = runGoCode(code);
+
+            // Display the result in the output box
             document.getElementById("output").innerText = result;
         }
     </script>
