@@ -85,12 +85,16 @@
                     value: [
                         'package main',
                         '',
-                        'import "fmt"',
+                        'import (',
+                        '    "fmt"',
+                        '    "runtime"',
+                        ')',
                         '',
                         'func main() {',
                         '    fmt.Println("👋 Welcome to the Go Browser Interpreter!")',
+                        '    fmt.Printf("🚀 Running on %s\\n", runtime.Version())',
                         '    fmt.Println()',
-                        '    fmt.Println("Try editing this code and press Run (Ctrl + Enter)")',
+                        '    fmt.Println("Try editing this code and press Run (Ctrl/Cmd + Enter)")',
                         '}'
                     ].join('\n'),
 
