@@ -12,9 +12,7 @@ This project is a **client-side Go playground** that lets you:
 *  Run the code instantly
 *  See output in a terminal-like panel
 
-**Everything runs inside the browser.**
-
-No data is sent anywhere.
+**Everything runs inside the browser.** Your code is interpreted locally. No data is sent to any server.
 
 ## How does it work? (Conceptual)
 
@@ -76,29 +74,54 @@ These are **browser + WASM limitations**, not bugs.
 
 ### 1. Requirements
 
-* Go 1.22+
-* A modern browser (Chrome, Firefox, Edge)
-* A local web server
+* Go 1.24+ (Required for latest WASM support)
+* modern browser (Chrome, Firefox, Edge)
+* A local web server (e.g., Python, Node, or serve)
 
-### 2. Build the WASM file
+### 2. Initialize Dependencies
+
+If you are running this for the first time, download the required Yaegi packages:
+
+```bash
+go mod init go-browser-interpreter
+go get [github.com/traefik/yaegi/interp](https://github.com/traefik/yaegi/interp)
+go get [github.com/traefik/yaegi/stdlib](https://github.com/traefik/yaegi/stdlib)
+```
+
+### 3. Build the WASM file
+
+Compiles your Go code into a .wasm binary that the browser can understand.
 
 ```bash
 GOOS=js GOARCH=wasm go build -o main.wasm main.go
 ```
 
-**Optional (smaller build):**
+**Optional (Optimization):**
+
+To reduce file size, strip debug information:
 
 ```bash
 GOOS=js GOARCH=wasm go build -ldflags="-s -w" -o main.wasm main.go
 ```
 
-### 3. Copy Go WASM runtime
+### 4. Copy Go WASM runtime
+
+You must copy the JavaScript glue code provided by your Go installation.
+For Go 1.24+ / 1.25+:
 
 ```bash
-cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
+cp "$(go env GOROOT)/lib/wasm/wasm_exec.js" .
 ```
+(Note: If the above fails, try $(go env GOROOT)/misc/wasm/wasm_exec.js)
 
-### 4. Start a local server
+Then confirm:
+
+```bash
+ls -l wasm_exec.js
+```
+### 5. Start a local server
+
+Browsers will not load WASM files from the file system (file://) due to CORS security policies.
 
 Using Python:
 
@@ -106,9 +129,7 @@ Using Python:
 python3 -m http.server 8080
 ```
 
-Open in browser:
-
- [http://localhost:8080](http://localhost:8080)
+Open in browser: [http://localhost:8080](http://localhost:8080)
 
 ## Credits
 
